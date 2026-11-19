@@ -1,0 +1,19 @@
+services:
+  db: # ชื่อ service ใช้อ้างถึงใน command ต่างๆ
+    image: postgres:16 # image ทางการ เวอร์ชัน 16
+    restart: unless-stopped # ถ้าเครื่องรีบูต ให้เปิดเองอัตโนมัติ
+    environment: # ค่าพวกนี้ถูกใช้แค่ "ครั้งแรก" ที่สร้าง DB
+      POSTGRES_USER: mailhub
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # อ่านจากไฟล์ .env
+      POSTGRES_DB: mailhub
+    ports:
+      - "127.0.0.1:5432:5432" # เปิดให้เข้าได้จากเครื่องนี้เท่านั้น
+    volumes:
+      - pgdata:/var/lib/postgresql/data # ข้อมูลยังอยู่ แม้ลบ container ทิ้ง
+    healthcheck: # ใช้เช็กว่า DB พร้อมรับ connection หรือยัง
+      test: ["CMD-SHELL", "pg_isready -U mailhub"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  pgdata: # ประกาศ named volume ที่ใช้ด้านบน
