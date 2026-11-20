@@ -1,4 +1,3 @@
-// packages/myops/src/crypto.ts
 import {
   createCipheriv,
   createDecipheriv,
@@ -25,5 +24,5 @@ export function decrypt(blob: Buffer, key: Buffer, aad?: Buffer): Buffer {
 }
 
 export function sha256Hex(data: Buffer | string): string {
-  throw new Error("TODO");
+  return createHash("sha256").update(data).digest("hex");
 }
