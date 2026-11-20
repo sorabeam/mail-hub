@@ -41,10 +41,12 @@ export function encrypt(plain: Buffer, key: Buffer, aad?: Buffer): Buffer {
 
 export function decrypt(blob: Buffer, key: Buffer, aad?: Buffer): Buffer {
   if (blob.length < 1 + IV_LEN + TAG_LEN) {
-    throw new Error("Blob Too Short");
+    throw new Error(
+      `Encrypted blob too short: need at least ${1 + IV_LEN + TAG_LEN} bytes, got ${blob.length}`,
+    );
   }
   if (blob[0] !== VERSION) {
-    throw new Error("not Version");
+    throw new Error(`Unsupported blob version: ${blob[0]}`);
   }
 
   const iv = blob.subarray(1, 1 + IV_LEN);
