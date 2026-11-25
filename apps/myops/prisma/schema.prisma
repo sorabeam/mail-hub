@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Provider {
+  GMAIL
+  OUTLOOK
+}
+
+model Account {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  provider       Provider
+  appPasswordEnc Bytes?    // App Password ที่เข้ารหัสด้วย encrypt() จาก T1
+  createdAt      DateTime  @default(now())
+  messages       Message[]
+}
+
+model Message {
+  id                  String    @id @default(uuid())
+  accountId           String
+  account             Account   @relation(fields: [accountId], references: [id])
+  gmMsgId             BigInt    // X-GM-MSGID ของ Gmail
+  messageIdHeader     String?   // header Message-ID (บางฉบับไม่มี)
+  subject             String?
+  fromAddr            String?
+  sentAt              DateTime?
+  sizeBytes           Int       // ขนาดเมลดิบก่อนเข้ารหัส
+  storageKey          String    @unique // key บน B2 เช่น msg/<id>
+  blobSha256          String    // sha256 ของ blob ที่เข้ารหัสแล้ว
+  verifiedAt          DateTime? // null = ยังไม่ยืนยันว่าอยู่บน B2 ครบ
+  deletedFromSourceAt DateTime?
+  createdAt           DateTime  @default(now())
+
+  @@unique([accountId, gmMsgId])
+  @@index([accountId, sentAt])
+}

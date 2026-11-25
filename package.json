@@ -7,7 +7,9 @@
   ],
   "scripts": {
     "dev:myops": "npm run dev -w @mailhub/myops",
-    "typecheck": "tsc -p apps/myops --noEmit"
+    "typecheck": "tsc -p apps/myops --noEmit",
+    "db:migrate": "npm run db:migrate -w @mailhub/myops",
+    "db:generate": "npm run db:generate -w @mailhub/myops"
   },
   "engines": {
     "node": ">=24 <25"

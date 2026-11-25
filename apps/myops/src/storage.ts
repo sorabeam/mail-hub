@@ -4,14 +4,9 @@ import {
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import { sha256Hex } from "./crypto";
+import { requireEnv } from "./env";
 
 let client: S3Client | undefined;
-
-function requireEnv(name: string): string {
-  const v = process.env[name];
-  if (!v) throw new Error(`${name} is not set`);
-  return v;
-}
 
 function getClient(): S3Client {
   if (client) return client;
